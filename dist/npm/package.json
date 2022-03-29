@@ -1,8 +1,7 @@
 {
   "name": "braintree-web-drop-in",
   "version": "1.33.0",
-  "main": "dist/npm/index.js",
-  "private": true,
+  "main": "index.js",
   "scripts": {
     "build": "gulp build",
     "development": "gulp development",
@@ -76,14 +75,9 @@
     "braintree-web": "3.85.2",
     "promise-polyfill": "8.2.1"
   },
-  "browserify": {
-    "transform": [
-      "brfs",
-      "browserify-versionify"
-    ]
-  },
   "browserslist": [
     "last 2 versions",
     "iOS 8"
-  ]
+  ],
+  "browser": "./dist/browser/dropin.js"
 }
