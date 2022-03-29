@@ -15530,6 +15530,12 @@ function DropinModel(options) {
     return total;
   }.bind(this), {});
 
+  // Define vaultedPaypalAccountsDisabled arrays:
+  this.vaultedPaymentMethodTypesThatShouldBeHidden = [].concat(VAULTED_PAYMENT_METHOD_TYPES_THAT_SHOULD_BE_HIDDEN);
+  if (options.merchantConfiguration.vaultedPaypalAccountsDisabled === true) {
+    this.vaultedPaymentMethodTypesThatShouldBeHidden.push(paymentMethodTypes.paypal);
+  }
+
   this.failedDependencies = {};
   this._options = options;
   this._setupComplete = false;
@@ -15871,10 +15877,11 @@ DropinModel.prototype.getVaultedPaymentMethods = function () {
 };
 
 DropinModel.prototype._getSupportedPaymentMethods = function (paymentMethods) {
+  var self = this;
   var supportedPaymentMethods = this.supportedPaymentOptions.reduce(function (array, key) {
     var paymentMethodType = paymentMethodTypes[key];
 
-    if (canShowVaultedPaymentMethodType(paymentMethodType)) {
+    if (canShowVaultedPaymentMethodType(paymentMethodType, self.vaultedPaymentMethodTypesThatShouldBeHidden)) {
       array.push(paymentMethodType);
     }
 
@@ -15948,8 +15955,8 @@ function isPaymentOptionEnabled(paymentOption, options) {
   });
 }
 
-function canShowVaultedPaymentMethodType(paymentMethodType) {
-  return paymentMethodType && VAULTED_PAYMENT_METHOD_TYPES_THAT_SHOULD_BE_HIDDEN.indexOf(paymentMethodType) === -1;
+function canShowVaultedPaymentMethodType(paymentMethodType, vaultedPaymentMethodTypesThatShouldBeHidden) {
+  return paymentMethodType && vaultedPaymentMethodTypesThatShouldBeHidden.indexOf(paymentMethodType) === -1;
 }
 
 module.exports = DropinModel;
@@ -17270,7 +17277,7 @@ var VERSION = '1.33.0';
  *
  * @param {(boolean|object)} [options.card] The configuration options for cards. See [`cardCreateOptions`](#~cardCreateOptions) for all `card` options. If this option is omitted, cards will still appear as a payment option. To remove cards, pass `false` for the value.
  * @param {object} [options.paypal] The configuration options for PayPal. To include a PayPal option in your Drop-in integration, include the `paypal` parameter and [enable PayPal in the Braintree Control Panel](https://developers.braintreepayments.com/guides/paypal/testing-go-live/#go-live). To test in Sandbox, you will need to [link a PayPal sandbox test account to your Braintree sandbox account](https://developers.braintreepayments.com/guides/paypal/testing-go-live/#linked-paypal-testing).
- *
+ * @param {boolean} [options.vaultedPaypalAccountsDisabled=false] When `true`, the paypal vaulted is disabled. This is very useful when you have two different payment flows and on one it is not possible to enable vaulting (due to legal restriction for example).
  * Some of the PayPal configuration options are listed [here](#~paypalCreateOptions), but for a full list see the [PayPal Checkout client reference options](http://braintree.github.io/braintree-web/3.85.2/PayPalCheckout.html#createPayment).
  *
  * PayPal is not [supported in Internet Explorer versions lower than 11](https://developer.paypal.com/docs/archive/checkout/reference/faq/#link-whichbrowsersdoespaypalcheckoutsupport).
