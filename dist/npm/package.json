@@ -2,6 +2,9 @@
   "name": "braintree-web-drop-in",
   "version": "1.33.0",
   "main": "index.js",
+  "scripts": {
+    "build": "gulp build"
+  },
   "devDependencies": {
     "@wdio/browserstack-service": "^7.25.2",
     "@wdio/cli": "^7.25.2",
